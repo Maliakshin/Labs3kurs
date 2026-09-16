@@ -173,18 +173,20 @@ public class Wolf extends Agent {
     }
 
     @Override
+
+    //Это надо сделать если оба направлений заблокированы, идем вдоль одной из стен в обратном направлении рандомно, пока не найдем выход в другое направление
+
+    //добавить флаг чтобы не забывал что пытается выбраться из угла
+    //убрать рекурсию
     public void movement(Agent[][] Field) {
         int[] closestAntelope = findAntelope(Field);
-        if (closestAntelope[0] != -100){
-            //Нашел антилопу
-            //если одно из двух направлений заблокировано, выбираем автоматически второе
-            //если оба направлений заблокированы, идем вдоль одной из стен в обратном направлении рандомно, пока не найдем выход в другое направление
-            //добавить флаг чтобы не забывал что пытается выбраться из угла
-
-            //Если оба направления свободны
-            //Сравниваем модуль разницы иксов и модуль разницы игриков, что больше в ту сторону и двигаемся.
-            //если иксы то смотрим справа или слева и делаем 1 шаг туда, аналогично с игриками
-            // если одинаково, то рандомное число 1 или 2, 1 иксы, 2 игреки
+        if (closestAntelope[0] != -100){ //антелопа найдена
+            if ((Math.abs(x-closestAntelope[0])) > (Math.abs(y-closestAntelope[1]))) {
+                movex(Field, closestAntelope, true);
+            }
+            else{
+                movey(Field, closestAntelope, true);
+            }
         }
         else{
             int [] newcords = getcords(x, y, Field);
@@ -198,14 +200,68 @@ public class Wolf extends Agent {
         }
 
     }
+    }
+    public void movex(Agent[][] Field, int[] closestAntelope, boolean flag){
+
+        if (x > closestAntelope[0]) {
+            if (Field[x - 1][y] == null || Field[x - 1][y] instanceof Antelope){
+                Field[x - 1][y] = Field[x][y];
+                Field[x][y] = null;
+                x = x - 1;
+            }
+            else if (flag){
+                movey(Field, closestAntelope, false);
+            }
+        }
+        else {
+            if (Field[x + 1][y] == null || Field[x + 1][y] instanceof Antelope) {
+                Field[x + 1][y] = Field[x][y];
+                Field[x][y] = null;
+                x = x + 1;
+            }
+            else if (flag){
+                movey(Field, closestAntelope, false);
+            }
+
+        }
+    }
+    public void movey(Agent[][] Field, int[] closestAntelope, boolean flag){
+        if (y>closestAntelope[1]){
+            if (Field[x][y-1] == null || Field[x][y-1] instanceof Antelope) {
+                Field[x][y - 1] = Field[x][y];
+                Field[x][y] = null;
+                y = y - 1;
+            }
+            else if (flag){
+                movex(Field, closestAntelope, false);
+            }
+
+        }
+        else {
+            if (Field[x][y+1] == null || Field[x][y+1] instanceof Antelope) {
+                Field[x][y + 1] = Field[x][y];
+                Field[x][y] = null;
+                y = y + 1;
+            }
+            else if(flag){
+                movex(Field, closestAntelope, false);
+            }
+
+        }
+
+    }
+
     public int[] findAntelope(Agent[][] Field){//поиск примитивный, если 2 антелопы на одинак расстоянии то идет к первой найденной
         int[] closest = new int[]{-100, -100};
-        for (int i = -3; i < 2; i++){
-            for (int j = -3; j<2; j++){
+        for (int i = -2; i <= 2; i++){
+            for (int j = -2; j<=2; j++){
+                if (this.x + i< 0 || this.x + i >=20) continue;
+                if (this.y+j < 0 || this.y+j >= 20) continue;
+
                 if (Field[this.x + i][this.y + j] instanceof Antelope){
-                    if (Math.abs(i)+Math.abs(j) < Math.abs(closest[0])+Math.abs(closest[1])){
-                        closest[0] = this.x + i;
-                        closest[1] = this.y + j;
+                    if (Math.abs(i)+Math.abs(j) < Math.abs(x-closest[0])+Math.abs(y-closest[1])){
+                        closest[0] = this.x+i;
+                        closest[1] = this.y+j;
                 }
             }
         }
