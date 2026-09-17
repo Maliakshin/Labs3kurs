@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="69553816-b9af-44d5-88bb-16a24f3bd237" name="Changes" comment="second draft" />
+    <list default="true" id="69553816-b9af-44d5-88bb-16a24f3bd237" name="Changes" comment="movementWolf">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,6 +41,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
     "onboarding.tips.debug.path": "C:/Users/dimas/IdeaProjects/labs3kurs/src/Main.java",
     "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
@@ -66,7 +70,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="second draft" />
-    <option name="LAST_COMMIT_MESSAGE" value="second draft" />
+    <MESSAGE value="movementWolf" />
+    <option name="LAST_COMMIT_MESSAGE" value="movementWolf" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
