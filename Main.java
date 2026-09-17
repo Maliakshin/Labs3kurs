@@ -10,7 +10,7 @@ void main() {
             int a = getRandomNumber(19);
             int b = getRandomNumber(19);
             if (Field[a][b] == null) {
-                Field[a][b] = new Grass(a, b);
+                Field[a][b] = new Grass(a, b, 0);
                 fl = false;
             }
         }
@@ -21,7 +21,7 @@ void main() {
             int a = getRandomNumber(19);
             int b = getRandomNumber(19);
             if (Field[a][b] == null) {
-                Field[a][b] = new Antelope(a, b);
+                Field[a][b] = new Antelope(a, b, 0);
                 fl = false;
             }
         }
@@ -32,7 +32,7 @@ void main() {
             int a = getRandomNumber(19);
             int b = getRandomNumber(19);
             if (Field[a][b] == null) {
-                Field[a][b] = new Wolf(a, b);
+                Field[a][b] = new Wolf(a, b,0);
                 fl = false;
             }
         }
@@ -46,11 +46,6 @@ void main() {
         int counterWolf = 0;
         for (int i = 0; i < 20; i++){
             for (int j = 0; j < 20; j++){
-                if (Field[i][j] != null){
-                    Field[i][j].action(Field);
-                    showField(Field);
-                    System.out.println(move);
-                }
                 if (Field[i][j] instanceof Grass){
                     counterGrass ++;
                 }
@@ -59,6 +54,13 @@ void main() {
                 }
                 if (Field[i][j] instanceof Wolf){
                     counterWolf ++;
+                }
+                if (Field[i][j] != null && Field[i][j].move<move){
+                    Field[i][j].move++;
+                    Field[i][j].action(Field);
+                    System.out.println(i);
+                    System.out.println(j);
+                    showField(Field);
                 }
             }
         }
@@ -81,13 +83,15 @@ void main() {
     //внутри проходим по полю и по порядку вызываем экшн у всех, после каждого хода отображаем новое поле и делаем паузу небольшую
 }
 abstract class Agent{
+    public int move;
     public int energy;
     public int x;
     public int y;
-    public Agent(int x, int y){
+    public Agent(int x, int y, int move){
         energy = 5;
         this.x = x;
         this.y = y;
+        this.move = move;
     }
     public abstract void action(Agent[][] Field);
     public abstract void movement(Agent[][] Field);
@@ -114,7 +118,7 @@ public class Grass extends Agent {
             int [] newcords = getcords(x, y, Field);
             if (newcords[0] != -1){
                 energy = 5;
-                Field[newcords[0]][newcords[1]] = new Grass(newcords[0], newcords[1]);
+                Field[newcords[0]][newcords[1]] = new Grass(newcords[0], newcords[1], move);
                 Field[newcords[0]][newcords[1]].action(Field);
                 showField(Field);
             }
@@ -124,8 +128,8 @@ public class Grass extends Agent {
         }
     }
 
-    public Grass(int a, int b) {
-        super(a, b);
+    public Grass(int a, int b, int move) {
+        super(a, b, move);
     }
 }
 public class Antelope extends Agent {
@@ -160,8 +164,8 @@ public class Antelope extends Agent {
 
     }
 
-    public Antelope(int a, int b) {
-        super(a, b);
+    public Antelope(int a, int b, int move) {
+        super(a, b, move);
     }
 }
 public class Wolf extends Agent {
@@ -169,16 +173,14 @@ public class Wolf extends Agent {
     @Override
     public void action(Agent[][] Field) {
         movement(Field);
-        splitting(Field);
+        splitting(Field);//Сделать сплит подобный траве, сплит происходит после 3х ходов, если энергии перебор она пропадает
     }
 
     @Override
-
-    //Это надо сделать если оба направлений заблокированы, идем вдоль одной из стен в обратном направлении рандомно, пока не найдем выход в другое направление
-
-    //добавить флаг чтобы не забывал что пытается выбраться из угла
-    //убрать рекурсию
-    public void movement(Agent[][] Field) {
+    //надо сделать что если сожрал антилопу то плюс ее энергия, если просто ход то минус энергия
+    //также надо сделать чтобы волк делал 3 хода, тратил на это 1 энергию
+    //если энергия 0 то сдох
+    public void movement(Agent[][] Field) {//надо сделать что если сожрал антилопу то плюс ее энергия, если просто ход то минус энергия
         int[] closestAntelope = findAntelope(Field);
         if (closestAntelope[0] != -100){ //антелопа найдена
             if ((Math.abs(x-closestAntelope[0])) > (Math.abs(y-closestAntelope[1]))) {
@@ -200,7 +202,7 @@ public class Wolf extends Agent {
         }
 
     }
-    }
+
     public void movex(Agent[][] Field, int[] closestAntelope, boolean flag){
 
         if (x > closestAntelope[0]) {
@@ -277,10 +279,11 @@ public class Wolf extends Agent {
 
     }
 
-    public Wolf(int a, int b) {
-        super(a, b);
+    public Wolf(int a, int b, int move) {
+        super(a, b, move);
     }
 }
+
 
 int[] getcords(int x, int y, Agent[][] Field){ //1 вправо, 2 вниз, 3 влево, 4 вверх, если что-то занято то следующее, если 4 занято то возвращаем -1 -1
     int scenario = getRandomNumber(4)+1;
@@ -343,7 +346,7 @@ void showField(Agent[][] Field){
         System.out.println();
     }
     try {
-        Thread.sleep(100);
+        Thread.sleep(50);
     } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         return;
