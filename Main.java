@@ -179,16 +179,16 @@ public class Main {
 
         @Override
         public void action(Agent[][] Field) {
+            energy--;
+            if (energy == 0){
+                Field[x][y] = null;
+            }
             movement(Field);
             splitting(Field);//Сделать сплит подобный траве, сплит происходит после 3х ходов, если энергии перебор она пропадает
         }
 
         @Override
-        //надо сделать что если сожрал антилопу то плюс ее энергия, если просто ход то минус энергия
-        //также надо сделать чтобы волк делал 3 хода, тратил на это 1 энергию
-        //если энергия 0 то сдох
         public void movement(Agent[][] Field) {//надо сделать что если сожрал антилопу то плюс ее энергия, если просто ход то минус энергия
-            energy--;
             for (int i = 0; i < 3; i++) {
                 int[] closestAntelope = findAntelope(Field);
                 if (closestAntelope[0] != -100) { //антелопа найдена
@@ -288,9 +288,18 @@ public class Main {
         }
 
         @Override
-        public void splitting(Agent[][] Field) {// анализируется поле вокруг, рандомно выбирается клетка и происходит деление, возвращается новый тип, которого экшн должен добавить на поле
-            // тут определяется клетка спавна типули
-            //после спавна типули вызывается его экшн чтобы он сходил
+        public void splitting(Agent[][] Field) {
+            if (energy == 11) {
+                int[] newcords = getcords(x, y, Field);
+                if (newcords[0] != -1) {
+                    energy = 5;
+                    Field[newcords[0]][newcords[1]] = new Wolf(newcords[0], newcords[1], move);
+                    Field[newcords[0]][newcords[1]].action(Field);
+                    showField(Field);
+                } else {
+                    energy = 10;
+                }
+            }
 
 
         }
