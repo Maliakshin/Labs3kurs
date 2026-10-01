@@ -1,26 +1,31 @@
+
+
+import javafx.application.Application;
+
+
 public class Main {
 
     public class parameters {
         public static int split_en_grass = 17;
-        public static int after_split_en_grass = 3;
+        public static int after_split_en_grass = 5;
         public static int anti_split_en_grass = 6;
         public static int en_for_move_grass = 3;
-        public static int split_en_Antelope = 40;
-        public static int after_split_en_Antelope = 8;
+        public static int split_en_Antelope = 105;
+        public static int after_split_en_Antelope = 35 ;
         public static int anti_split_en_Antelope = 20;
         public static int en_for_move_Antelope = 2;
-        public static int split_en_Wolf = 35;
-        public static int after_split_en_Wolf = 17;
-        public static int anti_split_en_Wolf = 35;
-        public static int en_for_move_Wolf = 8;
+        public static int split_en_Wolf = 1350;
+        public static int after_split_en_Wolf = 70;
+        public static int anti_split_en_Wolf = 5;
+        public static int en_for_move_Wolf = 4;
         public static int Field_size = 70;
     }
     public static void main(String[] args) {
-        new Main().main();
+        Application.launch(Window.class, args);
     }
     public void main() {
         Agent[][] Field = new Agent[parameters.Field_size][parameters.Field_size];
-        for (int i = 0; i < 20; i++) {//создаем траву
+        for (int i = 0; i < 105; i++) {//создаем траву
             boolean fl = true;
             while (fl) {
                 int a = getRandomNumber(parameters.Field_size);
@@ -31,7 +36,7 @@ public class Main {
                 }
             }
         }
-        for (int i = 0; i < 15; i++) {//создаем антилоп
+        for (int i = 0; i < 25; i++) {//создаем антилоп
             boolean fl = true;
             while (fl) {
                 int a = getRandomNumber(parameters.Field_size);
@@ -42,7 +47,7 @@ public class Main {
                 }
             }
         }
-        for (int i = 0; i < 10; i++) {//создаем волков
+        for (int i = 0; i <25; i++) {//создаем волков
             boolean fl = true;
             while (fl) {
                 int a = getRandomNumber(parameters.Field_size);
@@ -79,24 +84,25 @@ public class Main {
                     }
                 }
             }
-            showField(Field, move);
+            if (Window.restart) {
+                return;
+            }
+            int end = 0;
+
             if (counterGrass == 0) {
                 flag = false;
-                System.out.println("Трава исчезла");
+                end = 1;
             }
             if (counterAntelope == 0) {
                 flag = false;
-                System.out.println("Антелопы вымерли");
+                end = 2;
             }
             if (counterWolf == 0) {
                 flag = false;
-                System.out.println("Волки вымерли");
+                end = 3;
             }
-
+            showField(Field, move, end);
         }
-        //тут типа while и условия для существования мира
-
-        //внутри проходим по полю и по порядку вызываем экшн у всех, после каждого хода отображаем новое поле и делаем паузу небольшую
     }
 
     abstract class Agent {
@@ -106,7 +112,7 @@ public class Main {
         public int y;
 
         public Agent(int x, int y, int move) {
-            energy = 13;
+            energy = parameters.after_split_en_grass;
             this.x = x;
             this.y = y;
             this.move = move;
@@ -150,6 +156,7 @@ public class Main {
 
         public Grass(int a, int b, int move) {
             super(a, b, move);
+            energy = 13;
         }
     }
 
@@ -158,7 +165,7 @@ public class Main {
         @Override
         public void action(Agent[][] Field) {
             energy = energy - parameters.en_for_move_Antelope;
-            if (energy == 0){
+            if (energy <= 0){
                 Field[x][y] = null;
             }
             movement(Field);
@@ -202,6 +209,7 @@ public class Main {
 
         public Antelope(int a, int b, int move) {
             super(a, b, move);
+            energy = parameters.after_split_en_Antelope;
         }
         public int[] findwheretogo(Agent[][] Field) {
             int[] closest = new int[]{-100, -100};
@@ -320,7 +328,7 @@ public class Main {
         @Override
         public void action(Agent[][] Field) {
             energy = energy - parameters.en_for_move_Wolf;
-            if (energy == 0){
+            if (energy <= 0){
                 Field[x][y] = null;
             }
             movement(Field);
@@ -345,6 +353,7 @@ public class Main {
                         x = newcords[0];
                         y = newcords[1];
                     }
+
                 }
             }
         }
@@ -456,6 +465,7 @@ public class Main {
 
         public Wolf(int a, int b, int move) {
             super(a, b, move);
+            energy = parameters.after_split_en_Wolf;
         }
     }
 
@@ -501,29 +511,46 @@ public class Main {
         }
     }
 
-    void showField(Agent[][] Field, int move) {
+    void showField(Agent[][] Field, int move, int end) {
+        Window app = Window.getInstance();
 
-        clearConsole();
-        System.out.println(move);
+        // Если нажали Стоп — ждём
+        while (!app.isRunning()) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        String[][] symbols =
+                new String[parameters.Field_size][parameters.Field_size];
+
         for (int i = 0; i < parameters.Field_size; i++) {
             for (int j = 0; j < parameters.Field_size; j++) {
+
                 if (Field[i][j] instanceof Grass) {
-                    System.out.print("G ");
+                    symbols[i][j] = "\uD83C\uDF31";
                 } else if (Field[i][j] instanceof Antelope) {
-                    System.out.print("A ");
+                    symbols[i][j] = "\uD83E\uDD8C";
                 } else if (Field[i][j] instanceof Wolf) {
-                    System.out.print("W ");
+                    symbols[i][j] = "\uD83D\uDC3A";
                 } else {
-                    System.out.print("_ ");
+                    symbols[i][j] = " ";
                 }
             }
-            System.out.println();
         }
+
+        app.updateField(symbols);
+        app.updateMove(move);
+        if (end != 0){
+            app.end(end);
+        }
+
         try {
-            Thread.sleep(5);
+            Thread.sleep(app.getSleepTime());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return;
         }
     }
 
