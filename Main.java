@@ -6,18 +6,18 @@ import javafx.application.Application;
 public class Main {
 
     public class parameters {
-        public static int split_en_grass = 17;
-        public static int after_split_en_grass = 5;
-        public static int anti_split_en_grass = 6;
+        public static int split_en_grass = 10;
+        public static int after_split_en_grass = 12;
+        public static int anti_split_en_grass = 38;
         public static int en_for_move_grass = 3;
-        public static int split_en_Antelope = 105;
-        public static int after_split_en_Antelope = 35 ;
-        public static int anti_split_en_Antelope = 20;
-        public static int en_for_move_Antelope = 2;
-        public static int split_en_Wolf = 1350;
-        public static int after_split_en_Wolf = 70;
-        public static int anti_split_en_Wolf = 5;
-        public static int en_for_move_Wolf = 4;
+        public static int split_en_Antelope = 54;
+        public static int after_split_en_Antelope = 10 ;
+        public static int anti_split_en_Antelope = 185;
+        public static int en_for_move_Antelope = 1;
+        public static int split_en_Wolf = 2905;
+        public static int after_split_en_Wolf = 348;
+        public static int anti_split_en_Wolf = 1;
+        public static int en_for_move_Wolf = 10;
         public static int Field_size = 70;
     }
     public static void main(String[] args) {

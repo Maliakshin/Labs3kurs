@@ -106,6 +106,9 @@ public class  Window extends Application {
                 }
 
                 Window.restart = false;
+                Platform.runLater(() -> {
+                    controlLabel.setText("");
+                });
                 new Main().main();
 
             }).start();
